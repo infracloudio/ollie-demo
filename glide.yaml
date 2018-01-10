@@ -1,0 +1,21 @@
+package: github.com/infracloudio/ollie-demo
+import:
+- package: github.com/go-openapi/errors
+- package: github.com/go-openapi/loads
+- package: github.com/go-openapi/runtime
+  subpackages:
+  - flagext
+  - middleware
+  - security
+- package: github.com/go-openapi/spec
+- package: github.com/go-openapi/strfmt
+- package: github.com/go-openapi/swag
+- package: github.com/go-openapi/validate
+- package: github.com/jessevdk/go-flags
+- package: github.com/tylerb/graceful
+- package: gobot.io/x/gobot
+  version: 8bdf88241d21f6ab2b65b68a97e2ff3f36a5a6e2
+  subpackages:
+  - api
+  - platforms/ble
+  - platforms/sphero/ollie

@@ -1,0 +1,125 @@
+hash: 8f1b88693a8e46b3a25a90ca70b5ca144fd9a85d89e6cc6e13236d77550de0af
+updated: 2018-01-03T17:12:48.283634021+05:30
+imports:
+- name: github.com/asaskevich/govalidator
+  version: 852d82c746b23d9b357b210ea470d99f4e023b72
+- name: github.com/bmizerany/pat
+  version: 6226ea591a40176dd3ff9cd8eff81ed6ca721a00
+- name: github.com/creack/goselect
+  version: 1bd5ca702c6154bccc56ecd598932ee8b295cab2
+- name: github.com/docker/go-units
+  version: d59758554a3d3911fa25c0269de1ebe2f1912c39
+- name: github.com/go-ble/ble
+  version: 077870275f0ae179d6cf9d02ce5d07cd848d1a64
+  subpackages:
+  - darwin
+  - linux
+  - linux/adv
+  - linux/att
+  - linux/gatt
+  - linux/hci
+  - linux/hci/cmd
+  - linux/hci/evt
+  - linux/hci/socket
+- name: github.com/go-openapi/analysis
+  version: 0db1e4cf47d6eb0fc6b25135868c3483cc6b066e
+- name: github.com/go-openapi/errors
+  version: 7bcb96a367bac6b76e6e42fa84155bb5581dcff8
+- name: github.com/go-openapi/jsonpointer
+  version: 779f45308c19820f1a69e9a4cd965f496e0da10f
+- name: github.com/go-openapi/jsonreference
+  version: 36d33bfe519efae5632669801b180bf1a245da3b
+- name: github.com/go-openapi/loads
+  version: 2a2b323bab96e6b1fdee110e57d959322446e9c9
+- name: github.com/go-openapi/runtime
+  version: a76104f379d3c5041f2a56e69db3ad8404ce4826
+  subpackages:
+  - flagext
+  - logger
+  - middleware
+  - middleware/denco
+  - middleware/header
+  - middleware/untyped
+  - security
+- name: github.com/go-openapi/spec
+  version: fa03337d7da5735229ee8f5e9d5d0b996014b7f8
+- name: github.com/go-openapi/strfmt
+  version: 4dd3d302e100bae008baedc42d446ce83bdd10ad
+- name: github.com/go-openapi/swag
+  version: 84f4bee7c0a6db40e3166044c7983c1c32125429
+- name: github.com/go-openapi/validate
+  version: 0e805b142cf7a9f578a775ff7d05745534371f9d
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-multierror
+  version: b7773ae218740a7be65057fc60b366a49b538a44
+- name: github.com/jessevdk/go-flags
+  version: 96dc06278ce32a0e9d957d590bb987c81ee66407
+- name: github.com/mailru/easyjson
+  version: 32fa128f234d041f196a9f3e0fea5ac9772c08e1
+  subpackages:
+  - buffer
+  - jlexer
+  - jwriter
+- name: github.com/mattn/go-colorable
+  version: 586e6dcca296d085100876beb6dbf02287a247f7
+- name: github.com/mattn/go-isatty
+  version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+- name: github.com/mgutz/ansi
+  version: 9520e82c474b0a04dd04f8a40959027271bab992
+- name: github.com/mgutz/logxi
+  version: aebf8a7d67ab4625e0fd4a665766fef9a709161b
+  subpackages:
+  - v1
+- name: github.com/mitchellh/mapstructure
+  version: 06020f85339e21b2478f756a78e295255ffa4d6a
+- name: github.com/pkg/errors
+  version: e881fd58d78e04cf6d0de1217f8707c8cc2249bc
+- name: github.com/PuerkitoBio/purell
+  version: 1c4bec281e4bbc75b4f4a1bd923bdf1bd989a969
+- name: github.com/PuerkitoBio/urlesc
+  version: de5bf2ad457846296e2031421a34e2568e304e35
+- name: github.com/raff/goble
+  version: 591010bb87c136ee390f8f20529039fea824f737
+  subpackages:
+  - xpc
+- name: github.com/tylerb/graceful
+  version: d72b0151351a13d0421b763b88f791469c4f5dc7
+- name: go.bug.st/serial.v1
+  version: eae1344f9f90101f887b08d13391c34399f97873
+  subpackages:
+  - unixutils
+- name: gobot.io/x/gobot
+  version: 8bdf88241d21f6ab2b65b68a97e2ff3f36a5a6e2
+  subpackages:
+  - api
+  - api/robeaux
+  - platforms/ble
+  - platforms/sphero
+  - platforms/sphero/ollie
+- name: golang.org/x/net
+  version: d866cfc389cec985d6fda2859936a575a55a3ab6
+  subpackages:
+  - context
+  - idna
+- name: golang.org/x/sys
+  version: 83801418e1b59fb1880e363299581ee543af32ca
+  subpackages:
+  - unix
+  - windows
+- name: golang.org/x/text
+  version: e19ae1496984b1c655b8044a65c0300a3c878dd3
+  subpackages:
+  - secure/bidirule
+  - transform
+  - unicode/bidi
+  - unicode/norm
+  - width
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+- name: gopkg.in/yaml.v2
+  version: c95af922eae69f190717a0b7148960af8c55a072
+testImports: []

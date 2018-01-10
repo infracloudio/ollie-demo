@@ -1,0 +1,242 @@
+swagger: '2.0'
+info:
+  title: ollie-skill-api
+  description: Alexa custom skill service endpoints for Ollie
+  version: 1.0.0
+host: 'localhost:5000'
+schemes:
+  - https
+paths:
+  /:
+    post:
+      description: Alexa service request
+      operationId: postReq
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Request body
+          required: true
+          schema:
+            $ref: '#/definitions/Req'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/Resp'
+        '403':
+          description: Forbidden
+        '405':
+          description: Invalid input
+definitions:
+  Permissions:
+    type: object
+    properties:
+      consentToken:
+        type: string
+  Application:
+    type: object
+    properties:
+      applicationId:
+        type: string
+  Attributes:
+    type: object
+    properties:
+      command:
+        type: string
+      direction:
+        type: integer
+        format: uint16
+      speed:
+        type: integer
+        format: uint8
+      duration:
+        type: integer
+        format: uint16
+  User:
+    type: object
+    properties:
+      userId:
+        type: string
+      accessToken:
+        type: string
+      permissions:
+        $ref: '#/definitions/Permissions'
+  AudioPlayer:
+    type: object
+    properties:
+      token:
+        type: string
+      offsetInMilliseconds:
+        type: integer
+        format: int32
+      playerActivity:
+        type: string
+        description: Indicates the last known state of audio
+        enum:
+          - IDLE
+          - PAUSED
+          - PLAYING
+          - BUFFER_UNDERRUN
+          - FINISHED
+          - STOPPED
+  SupportedIntf:
+    type: object
+    properties:
+      AudioPlayer:
+        $ref: '#/definitions/AudioPlayer'
+  Device:
+    type: object
+    properties:
+      deviceId:
+        type: string
+      supportedInterfaces:
+        $ref: '#/definitions/SupportedIntf'
+  System:
+    type: object
+    properties:
+      device:
+        $ref: '#/definitions/Device'
+      application:
+        $ref: '#/definitions/Application'
+      user:
+        $ref: '#/definitions/User'
+      apiEndpoint:
+        type: string
+      apiAccessToken:
+        type: string
+  Session:
+    type: object
+    properties:
+      new:
+        type: boolean
+        default: true
+      sessionId:
+        type: string
+      application:
+        $ref: '#/definitions/Application'
+      attributes:
+        $ref: '#/definitions/Attributes'
+      user:
+        $ref: '#/definitions/User'
+  Context:
+    type: object
+    properties:
+      system:
+        $ref: '#/definitions/System'
+      AudioPlayer:
+        $ref: '#/definitions/AudioPlayer'
+  SlotName:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+  Slots:
+    type: object
+    properties:
+      trick:
+        $ref: '#/definitions/SlotName'
+      direction:
+        $ref: '#/definitions/SlotName'
+      duration:
+        $ref: '#/definitions/SlotName'
+      speed:
+        $ref: '#/definitions/SlotName'
+  Intent:
+    type: object
+    properties:
+      name:
+        type: string
+      confirmationStatus:
+        type: string
+      slots:
+        $ref: '#/definitions/Slots'
+  Request:
+    type: object
+    properties:
+      type:
+        type: string
+      requestId:
+        type: string
+      timestamp:
+        type: string
+      dialogState:
+        type: string
+      locale:
+        type: string
+      intent:
+        $ref: '#/definitions/Intent'
+  Req:
+    type: object
+    required:
+      - session
+      - context
+      - request
+    properties:
+      version:
+        type: string
+        example: '1.0'
+      session:
+        $ref: '#/definitions/Session'
+      context:
+        $ref: '#/definitions/Context'
+      request:
+        $ref: '#/definitions/Request'
+  OutputSpeech:
+    type: object
+    properties:
+      type:
+        type: string
+      text:
+        type: string
+  Image:
+    type: object
+    properties:
+      smallImageUrl:
+        type: string
+      largeImageUrl:
+        type: string
+  Card:
+    type: object
+    properties:
+      type:
+        type: string
+      title:
+        type: string
+      content:
+        type: string
+      text:
+        type: string
+      image:
+        $ref: '#/definitions/Image'
+  Reprompt:
+    type: object
+    properties:
+      outputSpeech:
+        $ref: '#/definitions/OutputSpeech'
+  Response:
+    type: object
+    properties:
+      outputSpeech:
+        $ref: '#/definitions/OutputSpeech'
+      card:
+        $ref: '#/definitions/Card'
+      reprompt:
+        $ref: '#/definitions/Reprompt'
+      shouldEndSession:
+        type: boolean
+        default: true
+  Resp:
+    type: object
+    properties:
+      version:
+        type: string
+      sessionAttributes:
+        $ref: '#/definitions/Attributes'
+      response:
+        $ref: '#/definitions/Response'
