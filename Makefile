@@ -25,8 +25,8 @@ $(SKILL_SERVER):
 	$(MAKE) OS=$(OS) ARCH=$(ARCH) BINARY=$(SKILL_SERVER) binary
 
 ## Run API Server
-run-api-server: $(SKILL_SERVER) ssl-keys
-	./dist/$(SKILL_SERVER)-$(OS)-$(ARCH) --tls-certificate $(CERT_DIR)/dev.crt --tls-key $(CERT_DIR)/dev.key
+run-api-server: $(SKILL_SERVER)
+	sudo ./dist/$(SKILL_SERVER)-$(OS)-$(ARCH)  --port=5000
 
 ssl-keys:
 	mkdir -p $(CERT_DIR)
@@ -41,6 +41,7 @@ binary:
 ## Generate swagger code
 swagger-codegen:
 	swagger generate server -f design/swagger.yaml -t ./pkg/
+	rm -r cmd
 	mv pkg/cmd .
 
 ## Cleanup all build files

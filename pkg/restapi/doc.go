@@ -6,7 +6,7 @@ Alexa custom skill service endpoints for Ollie
 
 
     Schemes:
-      https
+      http
     Host: localhost:5000
     BasePath: /
     Version: 1.0.0
