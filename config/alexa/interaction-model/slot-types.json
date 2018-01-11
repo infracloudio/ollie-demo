@@ -1,0 +1,20 @@
+{
+  "slot-types": [
+    {
+      "type": "CmdDirection",
+      "values": ["left", "right", "back", "reverse", "straight"]
+    },
+    {
+      "type": "CmdDuration",
+      "values": ["1", "2", "3", "4", "5"]
+    },
+    {
+      "type": "OllieTricks",
+      "values": ["roll", "spin", "stop", "jump", "blink"]
+    },
+    {
+      "type": "CmdSpeed",
+      "values": ["100", "200", "255"]
+    }
+  ]
+}
