@@ -8,42 +8,63 @@ import (
 	"time"
 )
 
-func checkDuration(iter *int) {
+func checkDuration(iter *uint16) {
 	if *iter > 0 {
 		*iter--
 	}
 	if *iter == 0 {
-		ch <- OllieCommand{"stop", 0, 0, 0}
+		ch <- OllieCommand{"stop", cmdDirection, 0, 0}
 	}
 }
 
+const (
+	defaultDir      = uint16(0)
+	defaultSpeed    = uint8(255)
+	defaultInterval = 100
+	defaultDur      = 20000
+)
+
+var (
+	cmdDirection uint16
+	cmdSpeed     uint8
+	cmdDuration  uint16
+)
+
 // NewOllieBot Ollie bot
 func NewOllieBot(port string) *gobot.Robot {
-	cmdDirection := uint16(0)
-	cmdSpeed := uint8(255)
-	cmdDuration := 0
-	cmdInterval := 200 * time.Millisecond
+	cmdDirection = defaultDir
+	cmdSpeed = defaultSpeed
+	cmdDuration = defaultDur
+	cmdInterval := defaultInterval * time.Millisecond
 	bleAdaptor := ble.NewClientAdaptor(port)
 	ollieBot := ollie.NewDriver(bleAdaptor)
 	work := func() {
 		ollieBot.AntiDOSOff()
 		ollieBot.EnableStopOnDisconnect()
+		ollieBot.SetStabilization(false)
+		ollieBot.Roll(0, 0)
 		var ticker *time.Ticker
 		for {
 			cmd := <-ch
-			if cmd.Direction != 0 {
-				cmdDirection = cmd.Direction
+			ollieBot.Wake()
+			// Stop previous command execution
+			if ticker != nil {
+				ollieBot.SetRGB(255, 0, 0)
+				ticker.Stop()
 			}
+			cmdDirection = cmd.Direction
 			if cmd.Speed != 0 {
 				cmdSpeed = cmd.Speed
+			} else {
+				cmdSpeed = defaultSpeed
 			}
 			if cmd.Duration > 0 {
-				cmdDuration = int(cmd.Duration)
+				cmdDuration = cmd.Duration
 			} else {
-				cmdDuration = -1000
+				cmdDuration = defaultDur
 			}
 			// No of command iterations (1 per 200ms)
-			it := cmdDuration / 200
+			it := cmdDuration / defaultInterval
 			switch cmd.Command {
 			case "jump":
 				ticker = gobot.Every(cmdInterval, func() {
@@ -54,9 +75,11 @@ func NewOllieBot(port string) *gobot.Robot {
 					checkDuration(&it)
 				})
 			case "roll":
+				ollieBot.Roll(0, cmdDirection)
+				time.Sleep(1 * time.Second)
+				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
 					ollieBot.Roll(cmdSpeed, cmdDirection)
-					ollieBot.SetRGB(0, 0, 255)
 					checkDuration(&it)
 				})
 			case "spin":
@@ -77,11 +100,11 @@ func NewOllieBot(port string) *gobot.Robot {
 			case "boost":
 				ollieBot.Boost(true)
 			case "stop":
-				ollieBot.Stop()
 				if ticker != nil {
-					ollieBot.SetRGB(255, 0, 0)
 					ticker.Stop()
 				}
+				ollieBot.SetRGB(255, 0, 0)
+				ollieBot.Roll(0, cmdDirection)
 			default:
 				fmt.Println("invalid command")
 			}

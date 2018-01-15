@@ -1,11 +1,5 @@
-AMAZON.HelpIntent What can you do
-AMAZON.HelpIntent Help
-AMAZON.HelpIntent Hi
-AMAZON.HelpIntent Hello
-OllieCommand Tell Ollie to {trick}
-OllieCommand Tell Ollie to spin
-OllieCommand Tell Ollie to {trick} for {duration} seconds
-OllieCommand Tell Ollie to {trick} for {duration} second
-OllieCommand Tell Ollie to turn {direction}
-OllieCommand Tell Ollie to roll in {direction}
-OllieCommand Tell Ollie to {trick} in {direction} for {duration} seconds
+OllieCommand {trick}
+OllieCommand {trick} for {duration} seconds
+OllieCommand turn {direction}
+OllieCommand roll in {direction}
+OllieCommand {trick} in {direction} for {duration} seconds
