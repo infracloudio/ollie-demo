@@ -2,7 +2,7 @@
 # The build architecture is select by setting the ARCH variable.
 # For example: When building on ppc64le you could use ARCH=ppc64le make <....>.
 # When ARCH is undefined it defaults to amd64.
-ARCH?=amd64
+ARCH?=arm
 
 # Determine which OS.
 OS?=$(shell uname -s | tr A-Z a-z)
