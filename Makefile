@@ -40,7 +40,7 @@ binary:
 
 ## Generate swagger code
 swagger-codegen:
-	swagger generate server -f design/swagger.yaml -t ./pkg/
+	swagger generate server -f config/swagger/swagger.yaml -t ./pkg/
 	rm -r cmd
 	mv pkg/cmd .
 
