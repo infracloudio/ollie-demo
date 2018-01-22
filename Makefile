@@ -6,6 +6,7 @@ ARCH?=arm
 
 # Determine which OS.
 OS?=$(shell uname -s | tr A-Z a-z)
+PORT?=5000
 
 # Get version from git.
 GIT_VERSION?=$(shell git describe --tags --dirty)
@@ -26,7 +27,11 @@ $(SKILL_SERVER):
 
 ## Run API Server
 run-api-server: $(SKILL_SERVER)
-	sudo ./dist/$(SKILL_SERVER)-$(OS)-$(ARCH)  --port=5000
+	sudo ./dist/$(SKILL_SERVER)-$(OS)-$(ARCH)  --port=$(PORT)
+
+## Run ngrox proxy
+run-ngrok:
+	ngrok http -bind-tls=true -host-header=rewrite $(PORT)
 
 ssl-keys:
 	mkdir -p $(CERT_DIR)
