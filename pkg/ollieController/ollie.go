@@ -21,7 +21,7 @@ const (
 	defaultDir      = uint16(0)
 	defaultSpeed    = uint8(255)
 	defaultInterval = 100
-	defaultDur      = 20000
+	defaultDur      = 5000
 )
 
 var (
@@ -67,22 +67,24 @@ func NewOllieBot(port string) *gobot.Robot {
 			it := cmdDuration / defaultInterval
 			switch cmd.Command {
 			case "jump":
+				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
 					ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Forward, cmdSpeed)
-					ollieBot.SetRGB(uint8(gobot.Rand(255)),
-						uint8(gobot.Rand(255)),
-						uint8(gobot.Rand(255)))
+					//ollieBot.SetRGB(uint8(gobot.Rand(255)),
+					//	uint8(gobot.Rand(255)),
+					//	uint8(gobot.Rand(255)))
 					checkDuration(&it)
 				})
-			case "roll":
+			case "go":
+				ollieBot.SetRGB(0, 0, 255)
 				ollieBot.Roll(0, cmdDirection)
 				time.Sleep(1 * time.Second)
-				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
 					ollieBot.Roll(cmdSpeed, cmdDirection)
 					checkDuration(&it)
 				})
 			case "spin":
+				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
 					ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Reverse, cmdSpeed)
 					ollieBot.SetRGB(uint8(gobot.Rand(255)),

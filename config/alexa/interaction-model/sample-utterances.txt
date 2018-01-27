@@ -1,5 +1,4 @@
 OllieCommand {trick}
 OllieCommand {trick} for {duration} seconds
-OllieCommand turn {direction}
-OllieCommand roll in {direction}
-OllieCommand {trick} in {direction} for {duration} seconds
+OllieCommand {trick} {direction}
+OllieCommand {trick} {direction} for {duration} seconds

@@ -10,7 +10,7 @@
     },
     {
       "type": "OllieTricks",
-      "values": ["roll", "spin", "stop", "jump", "blink"]
+      "values": ["go", "spin", "stop", "jump", "blink"]
     },
     {
       "type": "CmdSpeed",

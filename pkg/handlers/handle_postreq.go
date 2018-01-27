@@ -87,7 +87,7 @@ func onIntent(req *models.Request, session *models.Session) middleware.Responder
 // Send command to ollieController channel
 func sendCommandToOllie(resp models.Resp) {
 	// Wait till Alexa gets the response
-	time.Sleep(1 * time.Second)
+	time.Sleep(4 * time.Second)
 	c := resp.SessionAttributes.Command
 	dir := resp.SessionAttributes.Direction
 	speed := resp.SessionAttributes.Speed
