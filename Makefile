@@ -12,6 +12,7 @@ PORT?=5000
 GIT_VERSION?=$(shell git describe --tags --dirty)
 SKILL_SERVER?=ollie-skill-server
 CERT_DIR?=/tmp/$(SKILL_SERVER)
+REGION?=ap
 
 .PHONY: all binary clean help ssl-keys
 default: help
@@ -31,7 +32,7 @@ run-api-server: $(SKILL_SERVER)
 
 ## Run ngrox proxy
 run-ngrok:
-	ngrok http -bind-tls=true -host-header=rewrite $(PORT)
+	ngrok http -bind-tls=true -host-header=rewrite --region=$(REGION) $(PORT)
 
 ssl-keys:
 	mkdir -p $(CERT_DIR)
