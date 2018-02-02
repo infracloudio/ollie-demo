@@ -18,10 +18,11 @@ func checkDuration(iter *uint16) {
 }
 
 const (
-	defaultDir      = 0
-	defaultSpeed    = uint8(100)
-	defaultInterval = 100
-	defaultDur      = 5000
+	defaultDir       = 0
+	defaultSpeed     = uint8(255)
+	defaultRollSpeed = uint8(100)
+	defaultInterval  = 100
+	defaultDur       = 5000
 )
 
 var (
@@ -72,10 +73,11 @@ func NewOllieBot(port string) *gobot.Robot {
 				ollieBot.SetRGB(0, 0, 255)
 				ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Forward, cmdSpeed)
 				ollieBot.SetRGB(255, 0, 0)
+				ollieBot.Roll(0, uint16(ollieHead))
 			case "go":
 				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
-					ollieBot.Roll(cmdSpeed, uint16(ollieHead))
+					ollieBot.Roll(defaultRollSpeed, uint16(ollieHead))
 					checkDuration(&it)
 				})
 			case "spin":

@@ -7,7 +7,6 @@ import (
 	ollieBot "github.com/infracloudio/ollie-demo/pkg/ollieController"
 	operations "github.com/infracloudio/ollie-demo/pkg/restapi/operations"
 	"strconv"
-	"time"
 )
 
 func buildResponse(title string, output string, repromptText string, shouldEndSession bool, command string, dir int16, speed uint8, dur uint16) models.Resp {
@@ -67,8 +66,8 @@ func getIntentResponse(req *models.Request) middleware.Responder {
 	} else {
 		dur = 0
 	}
-	resp := buildResponse("Welcome", "Hey Ollie, can you "+cmd+"?", "What's next?", true, cmd, dir, speed, dur)
-	go sendCommandToOllie(resp)
+	resp := buildResponse("Welcome", "", "What's next?", true, cmd, dir, speed, dur)
+	sendCommandToOllie(resp)
 	r := operations.NewPostReqOK()
 	r.Payload = &resp
 	return r
@@ -89,7 +88,6 @@ func onIntent(req *models.Request, session *models.Session) middleware.Responder
 // Send command to ollieController channel
 func sendCommandToOllie(resp models.Resp) {
 	// Wait till Alexa gets the response
-	time.Sleep(4 * time.Second)
 	c := resp.SessionAttributes.Command
 	dir := resp.SessionAttributes.Direction
 	speed := resp.SessionAttributes.Speed
