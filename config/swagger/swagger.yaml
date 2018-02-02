@@ -49,7 +49,7 @@ definitions:
         type: string
       direction:
         type: integer
-        format: uint16
+        format: int16
       speed:
         type: integer
         format: uint8

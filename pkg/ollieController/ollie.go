@@ -13,21 +13,22 @@ func checkDuration(iter *uint16) {
 		*iter--
 	}
 	if *iter == 0 {
-		ch <- OllieCommand{"stop", cmdDirection, 0, 0}
+		ch <- OllieCommand{"stop", 0, 0, 0}
 	}
 }
 
 const (
-	defaultDir      = uint16(0)
-	defaultSpeed    = uint8(255)
+	defaultDir      = 0
+	defaultSpeed    = uint8(100)
 	defaultInterval = 100
 	defaultDur      = 5000
 )
 
 var (
-	cmdDirection uint16
+	cmdDirection int16
 	cmdSpeed     uint8
 	cmdDuration  uint16
+	ollieHead    int16
 )
 
 // NewOllieBot Ollie bot
@@ -39,6 +40,7 @@ func NewOllieBot(port string) *gobot.Robot {
 	bleAdaptor := ble.NewClientAdaptor(port)
 	ollieBot := ollie.NewDriver(bleAdaptor)
 	work := func() {
+		ollieHead = 0
 		ollieBot.AntiDOSOff()
 		ollieBot.EnableStopOnDisconnect()
 		ollieBot.SetStabilization(false)
@@ -68,19 +70,12 @@ func NewOllieBot(port string) *gobot.Robot {
 			switch cmd.Command {
 			case "jump":
 				ollieBot.SetRGB(0, 0, 255)
-				ticker = gobot.Every(cmdInterval, func() {
-					ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Forward, cmdSpeed)
-					//ollieBot.SetRGB(uint8(gobot.Rand(255)),
-					//	uint8(gobot.Rand(255)),
-					//	uint8(gobot.Rand(255)))
-					checkDuration(&it)
-				})
+				ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Forward, cmdSpeed)
+				ollieBot.SetRGB(255, 0, 0)
 			case "go":
 				ollieBot.SetRGB(0, 0, 255)
-				ollieBot.Roll(0, cmdDirection)
-				time.Sleep(1 * time.Second)
 				ticker = gobot.Every(cmdInterval, func() {
-					ollieBot.Roll(cmdSpeed, cmdDirection)
+					ollieBot.Roll(cmdSpeed, uint16(ollieHead))
 					checkDuration(&it)
 				})
 			case "spin":
@@ -101,12 +96,15 @@ func NewOllieBot(port string) *gobot.Robot {
 				})
 			case "boost":
 				ollieBot.Boost(true)
+			case "turn":
+				ollieHead = (360 + (ollieHead + cmdDirection)) % 360
+				ollieBot.Roll(0, uint16(ollieHead))
 			case "stop":
 				if ticker != nil {
 					ticker.Stop()
 				}
 				ollieBot.SetRGB(255, 0, 0)
-				ollieBot.Roll(0, cmdDirection)
+				ollieBot.Roll(0, uint16(ollieHead))
 			default:
 				fmt.Println("invalid command")
 			}

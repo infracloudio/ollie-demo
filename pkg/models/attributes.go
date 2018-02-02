@@ -20,7 +20,7 @@ type Attributes struct {
 	Command string `json:"command,omitempty"`
 
 	// direction
-	Direction uint16 `json:"direction,omitempty"`
+	Direction int16 `json:"direction,omitempty"`
 
 	// duration
 	Duration uint16 `json:"duration,omitempty"`

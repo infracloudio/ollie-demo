@@ -16,7 +16,7 @@ import (
 //			set 0 to run command for forever
 type OllieCommand struct {
 	Command   string
-	Direction uint16
+	Direction int16
 	Speed     uint8
 	Duration  uint16
 }

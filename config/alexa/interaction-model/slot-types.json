@@ -2,7 +2,7 @@
   "slot-types": [
     {
       "type": "CmdDirection",
-      "values": ["left", "right", "back", "reverse", "straight"]
+      "values": ["left", "right", "back", "reverse", "straight", "back"]
     },
     {
       "type": "CmdDuration",
@@ -10,7 +10,7 @@
     },
     {
       "type": "OllieTricks",
-      "values": ["go", "spin", "stop", "jump", "blink"]
+      "values": ["go", "spin", "stop", "jump", "blink", "turn"]
     },
     {
       "type": "CmdSpeed",

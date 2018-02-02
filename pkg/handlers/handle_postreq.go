@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func buildResponse(title string, output string, repromptText string, shouldEndSession bool, command string, dir uint16, speed uint8, dur uint16) models.Resp {
+func buildResponse(title string, output string, repromptText string, shouldEndSession bool, command string, dir int16, speed uint8, dur uint16) models.Resp {
 	outputSpeech := models.OutputSpeech{Type: "PlainText", Text: output}
 	sessionAttr := models.Attributes{Command: command, Direction: dir, Speed: speed, Duration: dur}
 	card := models.Card{Type: "Simple", Title: "SessionSpeechlet - " + title, Content: "SessionSpeechlet - " + output}
@@ -25,14 +25,14 @@ func getWelcomeResponse() middleware.Responder {
 	return r
 }
 
-func parserDirection(dir string) uint16 {
+func parserDirection(dir string) int16 {
 	if dir == "" {
 		return 0
 	}
 	// TODO: Add more directions
 	switch dir {
 	case "left":
-		return 270
+		return -90
 	case "straight":
 		return 0
 	case "right":
@@ -41,13 +41,15 @@ func parserDirection(dir string) uint16 {
 		return 180
 	case "reverse":
 		return 180
+	case "back":
+		return 180
 	default:
 		return 0
 	}
 }
 
 func getIntentResponse(req *models.Request) middleware.Responder {
-	var dir uint16
+	var dir int16
 	var speed uint8
 	var dur uint16
 	cmd := req.Intent.Slots.Trick.Value
