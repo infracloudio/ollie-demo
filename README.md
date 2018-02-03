@@ -1,9 +1,7 @@
 # ollie-demo
 
 ## :six_pointed_star: How it works
-![Alexa tell ollie spin](https://media.giphy.com/media/3oFzm2G3Z7GQSSX8cM/giphy.gif)
-
-![Demo Video](https://www.youtube.com/watch?v=v95SSgQ_stg)
+[![Alexa tell ollie spin](https://media.giphy.com/media/3oFzm2G3Z7GQSSX8cM/giphy.gif)](https://www.youtube.com/watch?v=v95SSgQ_stg)
 
 
 ## :green_book: Sample commands
