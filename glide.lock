@@ -1,5 +1,5 @@
-hash: 8f1b88693a8e46b3a25a90ca70b5ca144fd9a85d89e6cc6e13236d77550de0af
-updated: 2018-01-03T17:12:48.283634021+05:30
+hash: 1899cf77d1e414f94616dca534372c49f0abd493630897e0ad269dbceca8fdb5
+updated: 2018-02-04T16:28:38.555261373Z
 imports:
 - name: github.com/asaskevich/govalidator
   version: 852d82c746b23d9b357b210ea470d99f4e023b72
@@ -83,6 +83,8 @@ imports:
   version: 591010bb87c136ee390f8f20529039fea824f737
   subpackages:
   - xpc
+- name: github.com/sirupsen/logrus
+  version: 768a92a02685ee7535069fc1581341b41bab9b72
 - name: github.com/tylerb/graceful
   version: d72b0151351a13d0421b763b88f791469c4f5dc7
 - name: go.bug.st/serial.v1
@@ -97,6 +99,10 @@ imports:
   - platforms/ble
   - platforms/sphero
   - platforms/sphero/ollie
+- name: golang.org/x/crypto
+  version: 1875d0a70c90e57f11972aefd42276df65e895b9
+  subpackages:
+  - ssh/terminal
 - name: golang.org/x/net
   version: d866cfc389cec985d6fda2859936a575a55a3ab6
   subpackages:

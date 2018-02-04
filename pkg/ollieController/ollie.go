@@ -1,7 +1,7 @@
 package ollieController
 
 import (
-	"fmt"
+	log "github.com/sirupsen/logrus"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/platforms/ble"
 	"gobot.io/x/gobot/platforms/sphero/ollie"
@@ -84,9 +84,11 @@ func NewOllieBot(port string) *gobot.Robot {
 				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
 					ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Reverse, cmdSpeed)
-					ollieBot.SetRGB(uint8(gobot.Rand(255)),
-						uint8(gobot.Rand(255)),
-						uint8(gobot.Rand(255)))
+					if it % 5 == 0 {
+						ollieBot.SetRGB(uint8(gobot.Rand(255)),
+							uint8(gobot.Rand(255)),
+							uint8(gobot.Rand(255)))
+					}
 					checkDuration(&it)
 				})
 			case "blink":
@@ -108,7 +110,9 @@ func NewOllieBot(port string) *gobot.Robot {
 				ollieBot.SetRGB(255, 0, 0)
 				ollieBot.Roll(0, uint16(ollieHead))
 			default:
-				fmt.Println("invalid command")
+				log.WithFields(log.Fields{
+					"cmd": cmd,
+				}).Info("Invalid command received")
 			}
 		}
 	}

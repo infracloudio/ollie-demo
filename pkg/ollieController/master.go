@@ -1,6 +1,7 @@
 package ollieController
 
 import (
+	"fmt"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/api"
 )
@@ -19,6 +20,10 @@ type OllieCommand struct {
 	Direction int16
 	Speed     uint8
 	Duration  uint16
+}
+
+func (olcmd OllieCommand) String() string {
+	return fmt.Sprintf("{command:%v direction:%v speed:%v duration:%v}", olcmd.Command, olcmd.Direction, olcmd.Speed, olcmd.Duration)
 }
 
 var (

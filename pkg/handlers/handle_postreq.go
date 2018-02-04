@@ -6,6 +6,7 @@ import (
 	models "github.com/infracloudio/ollie-demo/pkg/models"
 	ollieBot "github.com/infracloudio/ollie-demo/pkg/ollieController"
 	operations "github.com/infracloudio/ollie-demo/pkg/restapi/operations"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 )
 
@@ -95,12 +96,17 @@ func sendCommandToOllie(resp models.Resp) {
 	dur := resp.SessionAttributes.Duration * 1000
 	cmd := ollieBot.OllieCommand{Command: c, Direction: dir, Speed: speed, Duration: dur}
 	fmt.Println("Command - ", cmd)
+	log.WithFields(log.Fields{
+		"command": cmd,
+	}).Info("Received command")
 	ollieBot.SendCommand(cmd)
 }
 
 // Handle POST requests
 func HandlePostReq(req *models.Req) middleware.Responder {
-	fmt.Println(req.Request.Type)
+	log.WithFields(log.Fields{
+		"intent": req.Request.Type,
+	}).Info("Received request")
 	if req.Request.Type == "LaunchRequest" {
 		return onLaunch(req.Request, req.Session)
 	} else if req.Request.Type == "IntentRequest" {
