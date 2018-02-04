@@ -2,7 +2,7 @@
   "slot-types": [
     {
       "type": "CmdDirection",
-      "values": ["left", "right", "back", "reverse", "straight", "back"]
+      "values": ["left", "right", "back", "reverse", "straight"]
     },
     {
       "type": "CmdDuration",
