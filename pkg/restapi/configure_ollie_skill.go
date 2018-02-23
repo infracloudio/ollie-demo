@@ -11,8 +11,8 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
+	"github.com/infracloudio/ollie-demo/pkg/botController"
 	"github.com/infracloudio/ollie-demo/pkg/handlers"
-	"github.com/infracloudio/ollie-demo/pkg/ollieController"
 	"github.com/infracloudio/ollie-demo/pkg/restapi/operations"
 )
 
@@ -34,8 +34,11 @@ func configureAPI(api *operations.OllieSkillAPI) http.Handler {
 	// Example:
 	// api.Logger = log.Printf
 
-	// Initialize Ollie controller
-	ollieController.InitController([]string{"2B-B4F0"})
+	// Read configuration
+	handlers.ReadConfig()
+
+	// Initialize bot caontroller
+	botController.InitController(handlers.Config.Bot.Name, handlers.Config.Bot.IDs)
 
 	api.JSONConsumer = runtime.JSONConsumer()
 

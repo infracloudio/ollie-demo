@@ -14,8 +14,10 @@ import:
 - package: github.com/jessevdk/go-flags
 - package: github.com/tylerb/graceful
 - package: gobot.io/x/gobot
-  version: 8bdf88241d21f6ab2b65b68a97e2ff3f36a5a6e2
+  version: 2cc78c57991f0edb14f6a12c8deb00e3236d1c39
+  repo: https://github.com/infracloudio/gobot.git
   subpackages:
   - api
   - platforms/ble
   - platforms/sphero/ollie
+- package: gopkg.in/yaml.v2

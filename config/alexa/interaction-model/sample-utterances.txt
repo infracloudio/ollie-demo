@@ -1,4 +1,0 @@
-OllieCommand {trick}
-OllieCommand {trick} for {duration} seconds
-OllieCommand {trick} {direction}
-OllieCommand {trick} {direction} for {duration} seconds

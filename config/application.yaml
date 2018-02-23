@@ -1,0 +1,8 @@
+bot:
+#  name: sphero
+#  ids:
+#  - Sphero-WBP
+  name: ollie
+  ids:
+  - "2B-B4F0"
+  speed: 30

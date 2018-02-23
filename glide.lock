@@ -1,5 +1,5 @@
-hash: 1899cf77d1e414f94616dca534372c49f0abd493630897e0ad269dbceca8fdb5
-updated: 2018-02-04T16:28:38.555261373Z
+hash: c863b9be9e25ef33cbbdc90bbf75dd2cfd0427f2fb95b6e8cfe83230a9e50190
+updated: 2018-02-20T12:21:46.895186851+05:30
 imports:
 - name: github.com/asaskevich/govalidator
   version: 852d82c746b23d9b357b210ea470d99f4e023b72
@@ -92,7 +92,8 @@ imports:
   subpackages:
   - unixutils
 - name: gobot.io/x/gobot
-  version: 8bdf88241d21f6ab2b65b68a97e2ff3f36a5a6e2
+  version: 2cc78c57991f0edb14f6a12c8deb00e3236d1c39
+  repo: https://github.com/infracloudio/gobot.git
   subpackages:
   - api
   - api/robeaux

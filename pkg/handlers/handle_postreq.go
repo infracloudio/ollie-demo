@@ -2,13 +2,46 @@ package handlers
 
 import (
 	"fmt"
+	"io/ioutil"
+	"strconv"
+	"time"
+
 	middleware "github.com/go-openapi/runtime/middleware"
+	bot "github.com/infracloudio/ollie-demo/pkg/botController"
 	models "github.com/infracloudio/ollie-demo/pkg/models"
-	ollieBot "github.com/infracloudio/ollie-demo/pkg/ollieController"
 	operations "github.com/infracloudio/ollie-demo/pkg/restapi/operations"
 	log "github.com/sirupsen/logrus"
-	"strconv"
+	"gopkg.in/yaml.v2"
 )
+
+type Bot struct {
+	Bot BotConf `yaml:"bot"`
+}
+
+type BotConf struct {
+	Name  string   `yaml:"name"`
+	IDs   []string `yaml:"ids"`
+	Speed uint8    `yaml:"speed"`
+}
+
+var Config Bot
+
+func dumpIntent(i *models.Intent) string {
+	return fmt.Sprintf("%v: {command:%v direction:%v speed:%v duration:%v}", i.Name, i.Slots.Trick.Value, i.Slots.Direction.Value, i.Slots.Speed.Value, i.Slots.Duration.Value)
+}
+
+// ReadConfig from application.json
+func ReadConfig() {
+	configFile, err := ioutil.ReadFile("config/application.yaml")
+	if err != nil {
+		log.Fatal("application.yaml file read err", err)
+	}
+	err = yaml.Unmarshal(configFile, &Config)
+	if err != nil {
+		log.Info("error:", err)
+	}
+	bot.DefaultRollSpeed = Config.Bot.Speed
+}
 
 func buildResponse(title string, output string, repromptText string, shouldEndSession bool, command string, dir int16, speed uint8, dur uint16) models.Resp {
 	outputSpeech := models.OutputSpeech{Type: "PlainText", Text: output}
@@ -19,7 +52,14 @@ func buildResponse(title string, output string, repromptText string, shouldEndSe
 }
 
 func getWelcomeResponse() middleware.Responder {
-	resp := buildResponse("Welcome", "Hello there! Please ask me to give Ollie commands like: Tell ollie to spin", "What's next?", true, "", 0, 0, 0)
+	resp := buildResponse("Welcome", "Hello there! Please ask me to give Ollie commands like: spin or go", "What's next?", true, "", 0, 0, 0)
+	r := operations.NewPostReqOK()
+	r.Payload = &resp
+	return r
+}
+
+func getLaunchResponse() middleware.Responder {
+	resp := buildResponse("Welcome", "Connected", "What's next?", false, "", 0, 0, 0)
 	r := operations.NewPostReqOK()
 	r.Payload = &resp
 	return r
@@ -48,13 +88,22 @@ func parserDirection(dir string) int16 {
 	}
 }
 
-func getIntentResponse(req *models.Request) middleware.Responder {
+func getIntentResponse(req *models.Request, session *models.Session) middleware.Responder {
 	var dir int16
 	var speed uint8
 	var dur uint16
+	endSession := false
+	defRespText := "what's next?"
 	cmd := req.Intent.Slots.Trick.Value
+	log.WithFields(log.Fields{
+		"command": cmd,
+	}).Info("Command received by backend")
 	if cmd == "" {
+		log.Info("Command is empty. Sending Welcome response")
 		return getWelcomeResponse()
+	} else if cmd == "stop" {
+		endSession = true
+		defRespText = ""
 	}
 	dir = parserDirection(req.Intent.Slots.Direction.Value)
 	if s, err := strconv.ParseUint(req.Intent.Slots.Speed.Value, 10, 8); err == nil {
@@ -67,49 +116,61 @@ func getIntentResponse(req *models.Request) middleware.Responder {
 	} else {
 		dur = 0
 	}
-	resp := buildResponse("Welcome", "", "What's next?", true, cmd, dir, speed, dur)
-	sendCommandToOllie(resp)
+	resp := buildResponse("Welcome", defRespText, "What's next?", endSession, cmd, dir, speed, dur)
+	sendCommandToBot(resp)
 	r := operations.NewPostReqOK()
 	r.Payload = &resp
 	return r
 }
 
 func onLaunch(req *models.Request, session *models.Session) middleware.Responder {
-	return getWelcomeResponse()
+	return getLaunchResponse()
 }
 
 func onIntent(req *models.Request, session *models.Session) middleware.Responder {
-	if req.Intent.Name == "OllieCommand" {
-		return getIntentResponse(req)
+	if req.Intent.Name == "Command" {
+		return getIntentResponse(req, session)
 	} else {
 		return getWelcomeResponse()
 	}
 }
 
 // Send command to ollieController channel
-func sendCommandToOllie(resp models.Resp) {
+func sendCommandToBot(resp models.Resp) {
 	// Wait till Alexa gets the response
 	c := resp.SessionAttributes.Command
 	dir := resp.SessionAttributes.Direction
 	speed := resp.SessionAttributes.Speed
 	// Convert dur to milliseconds
 	dur := resp.SessionAttributes.Duration * 1000
-	cmd := ollieBot.OllieCommand{Command: c, Direction: dir, Speed: speed, Duration: dur}
-	fmt.Println("Command - ", cmd)
+	cmd := bot.Command{Command: c, Direction: dir, Speed: speed, Duration: dur}
 	log.WithFields(log.Fields{
 		"command": cmd,
-	}).Info("Received command")
-	ollieBot.SendCommand(cmd)
+	}).Info("Sending command to " + Config.Bot.Name)
+	if Config.Bot.Name == "ollie" {
+		bot.SendCommandToOllie(cmd)
+	} else if Config.Bot.Name == "sphero" {
+		bot.SendCommandToSphero(cmd)
+	}
+	if cmd.Duration == 0 {
+		time.Sleep(time.Duration(bot.DefaultDur) * time.Millisecond)
+	} else {
+		time.Sleep(time.Duration(cmd.Duration) * time.Millisecond)
+	}
 }
 
 // Handle POST requests
 func HandlePostReq(req *models.Req) middleware.Responder {
-	log.WithFields(log.Fields{
-		"intent": req.Request.Type,
-	}).Info("Received request")
 	if req.Request.Type == "LaunchRequest" {
+		log.WithFields(log.Fields{
+			"intent": req.Request.Type,
+		}).Info("Received request")
 		return onLaunch(req.Request, req.Session)
 	} else if req.Request.Type == "IntentRequest" {
+		log.WithFields(log.Fields{
+			"intentType": req.Request.Type,
+			"intent":     dumpIntent(req.Request.Intent),
+		}).Info("Received request")
 		return onIntent(req.Request, req.Session)
 	} else {
 		return onLaunch(req.Request, req.Session)

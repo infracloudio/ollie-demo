@@ -1,54 +1,35 @@
-package ollieController
+package botController
 
 import (
-	log "github.com/sirupsen/logrus"
 	"gobot.io/x/gobot"
 	"gobot.io/x/gobot/platforms/ble"
 	"gobot.io/x/gobot/platforms/sphero/ollie"
 	"time"
-)
 
-func checkDuration(iter *uint16) {
-	if *iter > 0 {
-		*iter--
-	}
-	if *iter == 0 {
-		ch <- OllieCommand{"stop", 0, 0, 0}
-	}
-}
-
-const (
-	defaultDir       = 0
-	defaultSpeed     = uint8(255)
-	defaultRollSpeed = uint8(100)
-	defaultInterval  = 100
-	defaultDur       = 5000
-)
-
-var (
-	cmdDirection int16
-	cmdSpeed     uint8
-	cmdDuration  uint16
-	ollieHead    int16
+	log "github.com/sirupsen/logrus"
 )
 
 // NewOllieBot Ollie bot
 func NewOllieBot(port string) *gobot.Robot {
 	cmdDirection = defaultDir
 	cmdSpeed = defaultSpeed
-	cmdDuration = defaultDur
+	cmdDuration = DefaultDur
 	cmdInterval := defaultInterval * time.Millisecond
 	bleAdaptor := ble.NewClientAdaptor(port)
 	ollieBot := ollie.NewDriver(bleAdaptor)
 	work := func() {
-		ollieHead = 0
+		ollieHead := int16(0)
 		ollieBot.AntiDOSOff()
 		ollieBot.EnableStopOnDisconnect()
 		ollieBot.SetStabilization(false)
 		ollieBot.Roll(0, 0)
 		var ticker *time.Ticker
 		for {
-			cmd := <-ch
+			cmd := <-ol
+			log.WithFields(log.Fields{
+				"device": "ollie",
+				"cmd":    cmd,
+			}).Info("command received by ollie driver")
 			ollieBot.Wake()
 			// Stop previous command execution
 			if ticker != nil {
@@ -64,39 +45,42 @@ func NewOllieBot(port string) *gobot.Robot {
 			if cmd.Duration > 0 {
 				cmdDuration = cmd.Duration
 			} else {
-				cmdDuration = defaultDur
+				cmdDuration = DefaultDur
 			}
-			// No of command iterations (1 per 200ms)
+			// No of command iterations (1 per defaultInterval ms)
 			it := cmdDuration / defaultInterval
 			switch cmd.Command {
 			case "jump":
 				ollieBot.SetRGB(0, 0, 255)
+				ollieBot.Roll(255, uint16(ollieHead))
+				time.Sleep(1000 * time.Millisecond)
 				ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Forward, cmdSpeed)
 				ollieBot.SetRGB(255, 0, 0)
+				time.Sleep(1000 * time.Millisecond)
 				ollieBot.Roll(0, uint16(ollieHead))
 			case "go":
 				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
-					ollieBot.Roll(defaultRollSpeed, uint16(ollieHead))
-					checkDuration(&it)
+					ollieBot.Roll(DefaultRollSpeed, uint16(ollieHead))
+					checkDuration(&it, "ollie")
 				})
 			case "spin":
 				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
 					ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Reverse, cmdSpeed)
-					if it % 5 == 0 {
+					if it%5 == 0 {
 						ollieBot.SetRGB(uint8(gobot.Rand(255)),
 							uint8(gobot.Rand(255)),
 							uint8(gobot.Rand(255)))
 					}
-					checkDuration(&it)
+					checkDuration(&it, "ollie")
 				})
 			case "blink":
 				ticker = gobot.Every(cmdInterval, func() {
 					ollieBot.SetRGB(uint8(gobot.Rand(255)),
 						uint8(gobot.Rand(255)),
 						uint8(gobot.Rand(255)))
-					checkDuration(&it)
+					checkDuration(&it, "ollie")
 				})
 			case "boost":
 				ollieBot.Boost(true)
@@ -110,9 +94,9 @@ func NewOllieBot(port string) *gobot.Robot {
 				ollieBot.SetRGB(255, 0, 0)
 				ollieBot.Roll(0, uint16(ollieHead))
 			default:
-				log.WithFields(log.Fields{
+				log.WithFields(log.Fields{"device": "ollie",
 					"cmd": cmd,
-				}).Info("Invalid command received")
+				}).Error("Invalid command")
 			}
 		}
 	}
