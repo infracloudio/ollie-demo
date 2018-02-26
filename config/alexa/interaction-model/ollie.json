@@ -78,6 +78,13 @@
               "value": "5",
               "synonyms": []
             }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "half",
+              "synonyms": []
+            }
           }
         ]
       },
@@ -141,7 +148,14 @@
           {
             "id": null,
             "name": {
-              "value": "roll",
+              "value": "go",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "turn",
               "synonyms": []
             }
           }

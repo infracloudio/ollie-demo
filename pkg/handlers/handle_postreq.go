@@ -111,8 +111,10 @@ func getIntentResponse(req *models.Request, session *models.Session) middleware.
 	} else {
 		speed = 0
 	}
-	if s, err := strconv.ParseUint(req.Intent.Slots.Duration.Value, 10, 16); err == nil {
-		dur = uint16(s)
+	if req.Intent.Slots.Duration.Value == "half" {
+		dur = 500
+	} else if s, err := strconv.ParseUint(req.Intent.Slots.Duration.Value, 10, 16); err == nil {
+		dur = uint16(s) * 1000
 	} else {
 		dur = 0
 	}
@@ -142,7 +144,7 @@ func sendCommandToBot(resp models.Resp) {
 	dir := resp.SessionAttributes.Direction
 	speed := resp.SessionAttributes.Speed
 	// Convert dur to milliseconds
-	dur := resp.SessionAttributes.Duration * 1000
+	dur := resp.SessionAttributes.Duration
 	cmd := bot.Command{Command: c, Direction: dir, Speed: speed, Duration: dur}
 	log.WithFields(log.Fields{
 		"command": cmd,
