@@ -42,18 +42,18 @@ func NewSpheroBot(port string) *gobot.Robot {
 			} else {
 				cmdDuration = DefaultDur
 			}
-			// No of command iterations (1 per 200ms)
+			// No of command iterations (1 per defaultInterval ms)
 			it := cmdDuration / defaultInterval
-			log.WithFields(log.Fields{
-				"iterations": it,
-				"command":    cmd,
-			}).Info("executing command")
 			switch cmd.Command {
 			case "jump":
 				spheroBot.SetRGB(0, 0, 255)
-				spheroBot.SetRawMotorValues(sphero.Forward, cmdSpeed, sphero.Forward, cmdSpeed)
+				spheroBot.Roll(255, uint16(spheroHead))
+				time.Sleep(1000 * time.Millisecond)
+				//spheroBot.SetRawMotorValues(sphero.Forward, cmdSpeed, sphero.Forward, cmdSpeed)
 				spheroBot.SetRGB(255, 0, 0)
+				//time.Sleep(1000 * time.Millisecond)
 				spheroBot.Roll(0, uint16(spheroHead))
+				sp <- Command{"stop", 0, 0, 0}
 			case "go":
 				spheroBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
@@ -81,18 +81,21 @@ func NewSpheroBot(port string) *gobot.Robot {
 			case "boost":
 				spheroBot.Boost(true)
 			case "turn":
+				spheroBot.SetRGB(0, 0, 255)
 				spheroHead = (360 + (spheroHead + cmdDirection)) % 360
 				spheroBot.Roll(0, uint16(spheroHead))
+				time.Sleep(1 * time.Second)
+				sp <- Command{"stop", 0, 0, 0}
 			case "stop":
 				if ticker != nil {
 					ticker.Stop()
 				}
 				spheroBot.SetRGB(255, 0, 0)
 				spheroBot.Roll(0, uint16(spheroHead))
+				Complete <- true
 			default:
-				log.WithFields(log.Fields{
-					"device": "sphero",
-					"cmd":    cmd,
+				log.WithFields(log.Fields{"device": "sphero",
+					"cmd": cmd,
 				}).Error("Invalid command")
 			}
 		}

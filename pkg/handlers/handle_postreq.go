@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strconv"
-	"time"
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	bot "github.com/infracloudio/ollie-demo/pkg/botController"
 	models "github.com/infracloudio/ollie-demo/pkg/models"
 	operations "github.com/infracloudio/ollie-demo/pkg/restapi/operations"
+	"github.com/masatana/go-textdistance"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -25,6 +25,7 @@ type BotConf struct {
 }
 
 var Config Bot
+var validCmds [6]string
 
 func dumpIntent(i *models.Intent) string {
 	return fmt.Sprintf("%v: {command:%v direction:%v speed:%v duration:%v}", i.Name, i.Slots.Trick.Value, i.Slots.Direction.Value, i.Slots.Speed.Value, i.Slots.Duration.Value)
@@ -41,6 +42,7 @@ func ReadConfig() {
 		log.Info("error:", err)
 	}
 	bot.DefaultRollSpeed = Config.Bot.Speed
+	validCmds = [6]string{"spin", "stop", "jump", "blink", "go", "turn"}
 }
 
 func buildResponse(title string, output string, repromptText string, shouldEndSession bool, command string, dir int16, speed uint8, dur uint16) models.Resp {
@@ -49,6 +51,13 @@ func buildResponse(title string, output string, repromptText string, shouldEndSe
 	card := models.Card{Type: "Simple", Title: "SessionSpeechlet - " + title, Content: "SessionSpeechlet - " + output}
 	reprompt := models.Reprompt{OutputSpeech: &models.OutputSpeech{Type: "PlainText", Text: repromptText}}
 	return models.Resp{Response: &models.Response{OutputSpeech: &outputSpeech, Card: &card, Reprompt: &reprompt, ShouldEndSession: &shouldEndSession}, SessionAttributes: &sessionAttr, Version: "1.0"}
+}
+
+func getRetryResponse(cmd string) middleware.Responder {
+	resp := buildResponse("Welcome", "Ollie doesn't understand "+cmd+". Please try again.", "What's next?", false, "", 0, 0, 0)
+	r := operations.NewPostReqOK()
+	r.Payload = &resp
+	return r
 }
 
 func getWelcomeResponse() middleware.Responder {
@@ -92,6 +101,7 @@ func getIntentResponse(req *models.Request, session *models.Session) middleware.
 	var dir int16
 	var speed uint8
 	var dur uint16
+	found := false
 	endSession := false
 	defRespText := "what's next?"
 	cmd := req.Intent.Slots.Trick.Value
@@ -101,7 +111,28 @@ func getIntentResponse(req *models.Request, session *models.Session) middleware.
 	if cmd == "" {
 		log.Info("Command is empty. Sending Welcome response")
 		return getWelcomeResponse()
-	} else if cmd == "stop" {
+	} else {
+		for _, c := range validCmds {
+			// check JaroWinklerDistance
+			dist := textdistance.JaroWinklerDistance(c, cmd)
+			if dist == 1 {
+				found = true
+				break
+			} else if dist >= 0.70 {
+				log.Info("Command predicted: " + cmd)
+				found = true
+				cmd = c
+				break
+			}
+		}
+	}
+
+	if found == false {
+		log.Info("Invalid command " + cmd + ". Sending retry response")
+		return getRetryResponse(cmd)
+	}
+
+	if cmd == "stop" {
 		endSession = true
 		defRespText = ""
 	}
@@ -139,7 +170,6 @@ func onIntent(req *models.Request, session *models.Session) middleware.Responder
 
 // Send command to ollieController channel
 func sendCommandToBot(resp models.Resp) {
-	// Wait till Alexa gets the response
 	c := resp.SessionAttributes.Command
 	dir := resp.SessionAttributes.Direction
 	speed := resp.SessionAttributes.Speed
@@ -154,11 +184,9 @@ func sendCommandToBot(resp models.Resp) {
 	} else if Config.Bot.Name == "sphero" {
 		bot.SendCommandToSphero(cmd)
 	}
-	if cmd.Duration == 0 {
-		time.Sleep(time.Duration(bot.DefaultDur) * time.Millisecond)
-	} else {
-		time.Sleep(time.Duration(cmd.Duration) * time.Millisecond)
-	}
+
+	// wait for ack
+	_ = <-bot.Complete
 }
 
 // Handle POST requests

@@ -58,6 +58,7 @@ func NewOllieBot(port string) *gobot.Robot {
 				ollieBot.SetRGB(255, 0, 0)
 				//time.Sleep(1000 * time.Millisecond)
 				ollieBot.Roll(0, uint16(ollieHead))
+				ol <- Command{"stop", 0, 0, 0}
 			case "go":
 				ollieBot.SetRGB(0, 0, 255)
 				ticker = gobot.Every(cmdInterval, func() {
@@ -85,14 +86,18 @@ func NewOllieBot(port string) *gobot.Robot {
 			case "boost":
 				ollieBot.Boost(true)
 			case "turn":
+				ollieBot.SetRGB(0, 0, 255)
 				ollieHead = (360 + (ollieHead + cmdDirection)) % 360
 				ollieBot.Roll(0, uint16(ollieHead))
+				time.Sleep(1 * time.Second)
+				ol <- Command{"stop", 0, 0, 0}
 			case "stop":
 				if ticker != nil {
 					ticker.Stop()
 				}
 				ollieBot.SetRGB(255, 0, 0)
 				ollieBot.Roll(0, uint16(ollieHead))
+				Complete <- true
 			default:
 				log.WithFields(log.Fields{"device": "ollie",
 					"cmd": cmd,

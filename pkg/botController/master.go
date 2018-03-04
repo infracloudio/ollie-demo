@@ -41,8 +41,9 @@ func (olcmd Command) String() string {
 }
 
 var (
-	ol chan Command
-	sp chan Command
+	ol       chan Command
+	sp       chan Command
+	Complete chan bool
 )
 
 func SendCommandToOllie(cmd Command) {
@@ -71,6 +72,7 @@ func InitController(botName string, botIds []string) {
 	api.NewAPI(master).Start()
 	ol = make(chan Command, 2)
 	sp = make(chan Command, 2)
+	Complete = make(chan bool, 2)
 	switch botName {
 	case "sphero":
 		for _, port := range botIds {
