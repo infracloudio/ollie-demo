@@ -54,10 +54,14 @@ func NewOllieBot(port string) *gobot.Robot {
 				ollieBot.SetRGB(0, 0, 255)
 				ollieBot.Roll(255, uint16(ollieHead))
 				time.Sleep(1000 * time.Millisecond)
-				//ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Forward, cmdSpeed)
 				ollieBot.SetRGB(255, 0, 0)
 				//time.Sleep(1000 * time.Millisecond)
 				ollieBot.Roll(0, uint16(ollieHead))
+				ol <- Command{"stop", 0, 0, 0}
+			case "crazy":
+				ollieBot.SetRGB(0, 0, 255)
+				ollieBot.SetRawMotorValues(ollie.Forward, cmdSpeed, ollie.Forward, cmdSpeed)
+				time.Sleep(1000 * time.Millisecond)
 				ol <- Command{"stop", 0, 0, 0}
 			case "go":
 				ollieBot.SetRGB(0, 0, 255)

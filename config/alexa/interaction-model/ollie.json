@@ -158,6 +158,13 @@
               "value": "turn",
               "synonyms": []
             }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "crazy",
+              "synonyms": []
+            }
           }
         ]
       }

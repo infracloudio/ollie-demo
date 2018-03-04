@@ -9,7 +9,7 @@ import (
 	bot "github.com/infracloudio/ollie-demo/pkg/botController"
 	models "github.com/infracloudio/ollie-demo/pkg/models"
 	operations "github.com/infracloudio/ollie-demo/pkg/restapi/operations"
-	"github.com/masatana/go-textdistance"
+	"github.com/xrash/smetrics"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -25,7 +25,7 @@ type BotConf struct {
 }
 
 var Config Bot
-var validCmds [6]string
+var validCmds [7]string
 
 func dumpIntent(i *models.Intent) string {
 	return fmt.Sprintf("%v: {command:%v direction:%v speed:%v duration:%v}", i.Name, i.Slots.Trick.Value, i.Slots.Direction.Value, i.Slots.Speed.Value, i.Slots.Duration.Value)
@@ -42,7 +42,7 @@ func ReadConfig() {
 		log.Info("error:", err)
 	}
 	bot.DefaultRollSpeed = Config.Bot.Speed
-	validCmds = [6]string{"spin", "stop", "jump", "blink", "go", "turn"}
+	validCmds = [7]string{"spin", "stop", "jump", "blink", "go", "turn", "crazy"}
 }
 
 func buildResponse(title string, output string, repromptText string, shouldEndSession bool, command string, dir int16, speed uint8, dur uint16) models.Resp {
@@ -114,7 +114,7 @@ func getIntentResponse(req *models.Request, session *models.Session) middleware.
 	} else {
 		for _, c := range validCmds {
 			// check JaroWinklerDistance
-			dist := textdistance.JaroWinklerDistance(c, cmd)
+			dist := smetrics.JaroWinkler(c, cmd, 0.7, 4)
 			if dist == 1 {
 				found = true
 				break
