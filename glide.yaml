@@ -21,3 +21,4 @@ import:
   - platforms/ble
   - platforms/sphero/ollie
 - package: gopkg.in/yaml.v2
+- package: github.com/xrash/smetrics

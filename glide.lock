@@ -1,5 +1,5 @@
 hash: c863b9be9e25ef33cbbdc90bbf75dd2cfd0427f2fb95b6e8cfe83230a9e50190
-updated: 2018-03-04T11:32:11.966474997Z
+updated: 2018-03-06T17:00:25.796252083+05:30
 imports:
 - name: github.com/asaskevich/govalidator
   version: 852d82c746b23d9b357b210ea470d99f4e023b72
@@ -62,9 +62,9 @@ imports:
   - jlexer
   - jwriter
 - name: github.com/mattn/go-colorable
-  version: 586e6dcca296d085100876beb6dbf02287a247f7
+  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
 - name: github.com/mattn/go-isatty
-  version: 6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c
+  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
 - name: github.com/mgutz/ansi
   version: 9520e82c474b0a04dd04f8a40959027271bab992
 - name: github.com/mgutz/logxi
@@ -84,7 +84,7 @@ imports:
   subpackages:
   - xpc
 - name: github.com/sirupsen/logrus
-  version: f4ee69125072b22721efbe639bd0da9c9d19b8cc
+  version: 768a92a02685ee7535069fc1581341b41bab9b72
 - name: github.com/tylerb/graceful
   version: d72b0151351a13d0421b763b88f791469c4f5dc7
 - name: github.com/xrash/smetrics
@@ -103,7 +103,7 @@ imports:
   - platforms/sphero
   - platforms/sphero/ollie
 - name: golang.org/x/crypto
-  version: 91a49db82a88618983a78a06c1cbd4e00ab749ab
+  version: 3cb07270c9455e8ad27956a70891c962d121a228
   subpackages:
   - ssh/terminal
 - name: golang.org/x/net
