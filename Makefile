@@ -2,10 +2,10 @@
 # The build architecture is select by setting the ARCH variable.
 # For example: When building on ppc64le you could use ARCH=ppc64le make <....>.
 # When ARCH is undefined it defaults to amd64.
-ARCH?=arm
+ARCH?=$(shell go env GOARCH)
 
 # Determine which OS.
-OS?=$(shell uname -s | tr A-Z a-z)
+OS?=$(shell go env GOOS)
 PORT?=5000
 
 # Get version from git.
