@@ -26,7 +26,7 @@ const (
 	defaultSpeed    = uint8(255)
 	defaultDir      = 0
 	defaultInterval = 100
-	DefaultDur      = 5000
+	DefaultDur      = 1000
 )
 
 var (

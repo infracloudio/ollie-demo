@@ -9,8 +9,8 @@ import (
 	bot "github.com/infracloudio/ollie-demo/pkg/botController"
 	models "github.com/infracloudio/ollie-demo/pkg/models"
 	operations "github.com/infracloudio/ollie-demo/pkg/restapi/operations"
-	"github.com/xrash/smetrics"
 	log "github.com/sirupsen/logrus"
+	"github.com/xrash/smetrics"
 	"gopkg.in/yaml.v2"
 )
 
@@ -54,7 +54,7 @@ func buildResponse(title string, output string, repromptText string, shouldEndSe
 }
 
 func getRetryResponse(cmd string) middleware.Responder {
-	resp := buildResponse("Welcome", "Ollie doesn't understand "+cmd+". Please try again.", "What's next?", false, "", 0, 0, 0)
+	resp := buildResponse("Welcome", "Invalid command"+cmd+". Please try again.", "What's next?", false, "", 0, 0, 0)
 	r := operations.NewPostReqOK()
 	r.Payload = &resp
 	return r
